@@ -371,7 +371,7 @@ var PolygoniaPolygonsPlot = (function()
 		Render();
 		
 		// Set a timer to show the modified design and a message
-		window.setTimeout(() => { Plot_RenderPolygons(theDesign); ReportMessage("Click to show original");}, 500);
+		window.setTimeout(() => { Plot_RenderPolygons(theDesign); ReportMessage("Click to show original");}, 200);
 	}
 
 	//------------------------------------------------------------------------------------
@@ -737,9 +737,12 @@ var PolygoniaPolygonsPlot = (function()
 			theContext.beginPath();
 			
 			// Create the path for the polygon, but skip the frame, if it
-			// is identified
-			if (poly.info == undefined || !poly.info.isFrame)
-				color = plotFunc(poly, plotMode);
+			// is identified. Also, catch any errors.
+			try {
+				if (poly.points.length > 2 && (poly.info == undefined || !poly.info.isFrame))
+					color = plotFunc(poly, plotMode);
+			}
+			catch (err) {}
 			
 			// Use either the color returned from the plot function, the color
 			// stored with the polygon, or black
