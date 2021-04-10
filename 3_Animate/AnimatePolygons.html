@@ -3,18 +3,20 @@
 	<link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet'>
 	<style>
 		body {font-family: 'Quicksand', san-serif; }
-		canvas { border: 2px solid #ccc; }
+		canvas { border: 2px solid #ccc; max-width: 500px; width: 90vw; }
 		h1 { margin: 0px; border-bottom: 1px solid #ccc; padding-bottom: 6px }
 		.dragoverFeedback { border: 2px solid blue; }
-		.radio-container { margin-bottom: 10px; width:500px; }
+		.radio-container { margin-bottom: 10px; max-width:500px; }
 		.radio-div { display: inline-block; margin: 2px; padding: 2px;}
 		.radio-label { }
 		.sampleButton { margin: 5px 10px; }
 		.logo { height: 32px; }
-		#ID_Samples {width: 500px; }
+		#ID_Samples {max-width: 500px; }
 	</style>
     <head>
         <title>Polygonia: Animate Polygons</title>
+		<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0' />
+		<meta name="apple-mobile-web-app-capable" content="yes"> <!-- to remove the address bar on iOS -->
     </head>
     <body>
  		<img src="PolygoniaLogo.svg" class="logo" />

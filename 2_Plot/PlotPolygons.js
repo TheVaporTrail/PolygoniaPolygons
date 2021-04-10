@@ -42,9 +42,12 @@ var PolygoniaPolygonsPlot = (function()
 		// Create a list of plot functions. These will be used by BuildUI.
 		plotList.push({name:"Basic", func:PlotPolygon_Basic});
 		plotList.push({name:"Line to Center", func:PlotPolygon_LineToCenter});
-		plotList.push({name:"Twist Gray", func:PlotPolygon_Twist, mode:0});
-		plotList.push({name:"Twist Color", func:PlotPolygon_Twist, mode:1});
-		plotList.push({name:"Twist Always", func:PlotPolygon_TwistAlways});
+		plotList.push({name:"Twist..Always", func:PlotPolygon_TwistAlways});
+		plotList.push({name:"..Gray", func:PlotPolygon_Twist, mode:0});
+		plotList.push({name:"..Color", func:PlotPolygon_Twist, mode:1});
+		plotList.push({name:"Strings..1", func:PlotPolygon_Strings, mode:1});
+		plotList.push({name:"..2", func:PlotPolygon_Strings, mode:2});
+		plotList.push({name:"..3", func:PlotPolygon_Strings, mode:3});
 		
 		// Initial plot function is the first in the list
 		plotFunc = plotList[0].func;
@@ -165,7 +168,8 @@ var PolygoniaPolygonsPlot = (function()
 			plotFunc = plotList[idx].func;
 			plotMode = (mode != undefined) ? mode : 0;
 			
-			Plot_RenderPolygons(theDesign)
+			if (theDesign != undefined)
+				Plot_RenderPolygons(theDesign)
 		}
 	}
 	
@@ -612,7 +616,7 @@ var PolygoniaPolygonsPlot = (function()
 	var PlotPolygon_LineToCenter = function(poly)
 	{
 		let polyCtr = (poly.info && poly.info.ctr ? poly.info.ctr : CalcApproximateCenter(poly.points));
-		let sp = 2;
+		let sp = 4;
 		
 		theContext.lineWidth = 0.5;
 		
@@ -620,7 +624,9 @@ var PolygoniaPolygonsPlot = (function()
 		{
 			let ptA = poly.points[i];
 			let ptB = poly.points[(i + 1) % poly.points.length];
-			let d = DistanceBetween(ptA, ptB);
+			let scaledPtA = ScalePtToCanvas(poly.points[i]);
+			let scaledPtB = ScalePtToCanvas(poly.points[(i + 1) % poly.points.length]);
+			let d = DistanceBetween(scaledPtA, scaledPtB);
 			let u = UnitVector(ptA, ptB);
 			
 			var count = Math.floor(d/sp);
@@ -711,6 +717,51 @@ var PolygoniaPolygonsPlot = (function()
 			count++;
 		}
 		while (DistanceBetween(ptsA[0], ptsA[1]) > 2 && count < 100);
+		
+		return "#000000"; // black
+	}
+
+	//------------------------------------------------------------------------------------
+	//	Plot: Strings
+	//------------------------------------------------------------------------------------
+	var PlotPolygon_Strings = function(poly, mode)
+	{
+		let len = poly.points.length;
+		let count = 0;
+		var t = 0.2;
+		var steps = 9;
+				
+		theContext.lineWidth = 0.5;
+
+		var ptsA = poly.points;
+		var ptsB = [];
+		
+		DrawClosedPoly(poly.points);
+		
+		for (var i = 0; i < steps; i++)
+		{
+			for (var j = 0; j < len; j++)
+			{
+				if (mode == 1)
+				{
+					var ptA = CalcPointBetween(ptsA[j], ptsA[(j + 1) % len], i/steps);
+					var ptB = CalcPointBetween(ptsA[(j + 1) % len], ptsA[(j + 2) % len], i/steps);
+				}
+				else if (mode == 2)
+				{
+					var ptA = CalcPointBetween(ptsA[j], ptsA[(j + 2) % len], i/steps);
+					var ptB = CalcPointBetween(ptsA[(j + 1) % len], ptsA[(j + 3) % len], i/steps);
+				}
+				else if (mode == 3)
+				{
+					var ptA = CalcPointBetween(ptsA[j], ptsA[(j + 1) % len], i/steps);
+					var ptB = CalcPointBetween(ptsA[(j + 2) % len], ptsA[(j + 3) % len], i/steps);
+				}
+
+				MoveTo(ptA);
+				LineTo(ptB);
+			}
+		}
 		
 		return "#000000"; // black
 	}
