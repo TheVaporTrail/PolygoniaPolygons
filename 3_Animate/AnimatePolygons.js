@@ -77,6 +77,11 @@ var PolygoniaPolygonsAnimate = (function()
 
 		// Initial render of the canvas, to show the "Drag here" message
 		Render();
+		
+		// Load a design if specified with "#" after the URL
+		let loadIdx = parseInt(window.location.hash.substr(1));
+		if (isFinite(loadIdx) && loadIdx >= 0 && loadIdx < sampleList.length)
+			LoadSample(sampleList[loadIdx].ref);
 	}
 
 	//------------------------------------------------------------------------------------
@@ -151,21 +156,19 @@ var PolygoniaPolygonsAnimate = (function()
 		for (var i = 0; i < sampleList.length && container != undefined; i++)
 		{
 			let button = document.createElement("button");
+			let url = sampleList[i].ref;
 			button.innerHTML = sampleList[i].name;
 			button.classList.add("sampleButton");
-			button.dataset.sample = sampleList[i].ref;
-			button.addEventListener("click", LoadSampleButton);
+			button.addEventListener("click", evt => LoadSample(url));
 			container.appendChild(button);
 		}
 	}
 	
 	//------------------------------------------------------------------------------------
-	//	Load Sample Button
+	//	Load Sample
 	//------------------------------------------------------------------------------------
-	var LoadSampleButton = function(evt)
+	var LoadSample = function(url)
 	{
-		const url = evt.target.dataset.sample;
-
 		fetch(url)
 		.then( r => 
 		{
